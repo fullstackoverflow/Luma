@@ -49,15 +49,33 @@ $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
 ```
 
 Debug APK：`app/build/outputs/apk/debug/app-debug.apk`。
-Release 构建需自行配置签名；当前项目未包含发布密钥。
+Release 签名从环境变量 `KEYSTORE_FILE`（密钥文件路径）、`KEYSTORE_PASSWORD`、`KEY_ALIAS`、`KEY_PASSWORD` 读取。未设置 `KEYSTORE_FILE` 时，本地 Gradle 可构建未签名 Release，也可以使用 Android Studio 的签名向导。项目不包含发布密钥。
 
 ### GitHub Actions 打包
 
-仓库包含 `.github/workflows/build-apk.yml`。推送代码、创建或更新 PR 时自动构建，也可以在 GitHub 的 **Actions → Build APK → Run workflow** 手动触发。
+仓库包含 `.github/workflows/build-apk.yml`，仅推送 `v*` 标签时触发 **Release APK** 工作流，普通分支提交和 PR 不触发。标签格式为 `v0.1.2` 或 `v0.1.2-beta.1`；带后缀的版本自动标记为预发布。
 
-工作流使用 JDK 21、Android SDK 36 和项目自带的 Gradle wrapper，执行 Debug APK 构建、单元测试及 Lint。成功后在该次运行页面的 **Artifacts** 下载 `Luma-debug-运行编号`，解压得到 `app-debug.apk`；APK 保存 30 天，检查报告保存 14 天。
+先在仓库 **Settings → Secrets and variables → Actions → Repository secrets** 设置四个 Secrets：
 
-无需配置 Secrets。APK 使用构建机器生成的 Debug 签名，不保证不同运行之间或与本地安装包之间可覆盖升级；用于持续分发的正式版本需配置固定的发布签名。
+| 名称 | 内容 |
+| --- | --- |
+| `KEYSTORE_BASE64` | 发布密钥文件的 Base64 编码 |
+| `KEYSTORE_PASSWORD` | 密钥库密码 |
+| `KEY_ALIAS` | 密钥别名，例如 `luma` |
+| `KEY_PASSWORD` | 密钥密码 |
+
+工作流使用 JDK 21、Android SDK 36 和项目自带的 Gradle wrapper，构建已签名且经过混淆的 Release APK，运行现有单元测试及 Release Lint，并验证 APK 签名。缺少 Secrets 或检查失败时不会发布。
+
+发布前递增 `app/build.gradle.kts` 中的 `versionCode`，并更新本地默认 `versionName`。CI 的 APK `versionName` 自动使用标签去掉 `v` 后的值。提交代码后推送标签：
+
+```bash
+git tag -a v0.1.2 -m "Release v0.1.2"
+git push origin v0.1.2
+```
+
+成功后可在仓库 **Releases** 下载 `Luma-v0.1.2.apk` 和 `SHA256SUMS.txt`。Actions 的 APK 备份保存 30 天，检查报告及混淆映射保存 14 天。重跑同一标签的工作流会更新对应 Release 的同名附件。
+
+每次发布继续使用同一套密钥，以便覆盖升级。密钥文件及密码应自行备份，不要提交到仓库。现有 Debug 安装包与 Release 签名不同，首次换装需要卸载 Debug 版本。
 
 ## 当前验证范围
 

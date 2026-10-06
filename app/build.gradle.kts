@@ -1,5 +1,7 @@
 plugins { id("com.android.application") }
 
+val releaseKeystore = providers.environmentVariable("KEYSTORE_FILE").orNull
+
 android {
     namespace = "dev.luma.monitor"
     compileSdk = 36
@@ -8,15 +10,29 @@ android {
         minSdk = 28
         targetSdk = 36
         versionCode = 2
-        versionName = "0.1.1"
+        versionName = providers.environmentVariable("LUMA_VERSION_NAME").orElse("0.1.1").get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = providers.environmentVariable("KEYSTORE_PASSWORD").orNull
+                    ?: error("Missing KEYSTORE_PASSWORD for release signing")
+                keyAlias = providers.environmentVariable("KEY_ALIAS").orNull
+                    ?: error("Missing KEY_ALIAS for release signing")
+                keyPassword = providers.environmentVariable("KEY_PASSWORD").orNull
+                    ?: error("Missing KEY_PASSWORD for release signing")
+            }
+        }
+    }
     buildTypes {
         release {
+            if (releaseKeystore != null) signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }

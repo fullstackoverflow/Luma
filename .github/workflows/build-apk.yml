@@ -1,20 +1,20 @@
-name: Build APK
+name: Release APK
 
 on:
   push:
-  pull_request:
-  workflow_dispatch:
+    tags:
+      - 'v*'
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: build-apk-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: release-apk-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build and check Android app
+  release:
+    name: Build signed APK and publish release
     runs-on: ubuntu-24.04
     timeout-minutes: 30
 
@@ -37,19 +37,75 @@ jobs:
           packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
           log-accepted-android-sdk-licenses: false
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
+      - name: Prepare release signing and version
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Use a version tag such as v0.1.2 or v0.1.2-beta.1"
+            exit 1
+          fi
+          for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Missing repository secret: $name"
+              exit 1
+            fi
+          done
+          umask 077
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/luma-release.jks"
+          test -s "$RUNNER_TEMP/luma-release.jks"
+          echo "KEYSTORE_FILE=$RUNNER_TEMP/luma-release.jks" >> "$GITHUB_ENV"
+          echo "LUMA_VERSION_NAME=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          chmod +x gradlew
 
-      - name: Build APK, run unit tests and lint
-        run: ./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --no-daemon --console=plain
+      - name: Build signed release APK, run unit tests and lint
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease :app:testDebugUnitTest :app:lintRelease --no-daemon --console=plain
 
-      - name: Upload APK
+      - name: Verify signature and prepare APK
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose app/build/outputs/apk/release/app-release.apk
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk "dist/Luma-$GITHUB_REF_NAME.apk"
+          cd dist
+          sha256sum "Luma-$GITHUB_REF_NAME.apk" > SHA256SUMS.txt
+
+      - name: Remove signing file
+        if: ${{ always() }}
+        run: rm -f "$RUNNER_TEMP/luma-release.jks"
+
+      - name: Upload release APK artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Luma-debug-${{ github.run_number }}
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Luma-${{ github.ref_name }}
+          path: dist/
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "dist/Luma-$GITHUB_REF_NAME.apk" dist/SHA256SUMS.txt --clobber
+          else
+            flags=()
+            if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+              flags+=(--prerelease)
+            fi
+            gh release create "$GITHUB_REF_NAME" "dist/Luma-$GITHUB_REF_NAME.apk" dist/SHA256SUMS.txt \
+              --verify-tag --title "Luma $GITHUB_REF_NAME" --generate-notes "${flags[@]}"
+          fi
 
       - name: Upload check reports
         if: ${{ always() }}
@@ -58,6 +114,7 @@ jobs:
           name: Luma-reports-${{ github.run_number }}
           path: |
             app/build/reports/tests/testDebugUnitTest/
-            app/build/reports/lint-results-debug.*
+            app/build/reports/lint-results-release.*
+            app/build/outputs/mapping/release/
           if-no-files-found: ignore
           retention-days: 14
