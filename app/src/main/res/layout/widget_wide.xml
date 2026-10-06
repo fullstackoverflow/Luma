@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/card_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/widget_background" android:paddingStart="16dp" android:paddingEnd="16dp" android:paddingTop="8dp" android:paddingBottom="8dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="32dp" android:gravity="center_vertical" android:orientation="horizontal">
+        <TextView android:id="@+id/node_name" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tokyo · 01" android:textColor="@color/widget_ink" android:textSize="17sp" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="● 在线" android:textColor="@color/widget_good" android:textSize="11sp" android:layout_marginStart="6dp" />
+        <ImageButton android:id="@+id/refresh" android:layout_width="32dp" android:layout_height="32dp" android:background="@android:color/transparent" android:src="@drawable/ic_refresh" android:contentDescription="刷新卡片" />
+    </LinearLayout>
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false" android:layout_marginTop="2dp">
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView style="@style/WidgetLabel" android:layout_width="0dp" android:layout_weight="1" android:text="CPU" />
+            <TextView android:id="@+id/cpu" style="@style/WidgetLabel" android:layout_width="wrap_content" android:text="—" android:textSize="16sp" android:textColor="@color/widget_ink" android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+        <ImageView android:id="@+id/cpu_bar" android:layout_width="match_parent" android:layout_height="6dp" android:layout_marginTop="2dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+    </LinearLayout><TextView android:layout_width="16dp" android:layout_height="1dp" /><LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView style="@style/WidgetLabel" android:layout_width="0dp" android:layout_weight="1" android:text="内存" />
+            <TextView android:id="@+id/memory" style="@style/WidgetLabel" android:layout_width="wrap_content" android:text="—" android:textSize="16sp" android:textColor="@color/widget_ink" android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+        <ImageView android:id="@+id/memory_bar" android:layout_width="match_parent" android:layout_height="6dp" android:layout_marginTop="2dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+    </LinearLayout></LinearLayout>
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false" android:layout_marginTop="2dp">
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView style="@style/WidgetLabel" android:layout_width="0dp" android:layout_weight="1" android:text="磁盘" />
+            <TextView android:id="@+id/disk" style="@style/WidgetLabel" android:layout_width="wrap_content" android:text="—" android:textSize="16sp" android:textColor="@color/widget_ink" android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+        <ImageView android:id="@+id/disk_bar" android:layout_width="match_parent" android:layout_height="6dp" android:layout_marginTop="2dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+    </LinearLayout><TextView android:layout_width="16dp" android:layout_height="1dp" /><LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView style="@style/WidgetLabel" android:layout_width="0dp" android:layout_weight="1" android:text="负载 · 1 分钟" />
+            <TextView android:id="@+id/load" style="@style/WidgetLabel" android:layout_width="wrap_content" android:text="—" android:textSize="16sp" android:textColor="@color/widget_ink" android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+        <ImageView android:id="@+id/load_bar" android:layout_width="match_parent" android:layout_height="6dp" android:layout_marginTop="2dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+    </LinearLayout></LinearLayout>
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false" android:padding="4dp" android:layout_marginTop="4dp" android:background="@drawable/widget_panel">
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+        <TextView android:id="@+id/upload" style="@style/WidgetLabel" android:text="↑ —" android:textColor="@color/widget_disk" />
+        <TextView android:id="@+id/download" style="@style/WidgetLabel" android:text="↓ —" android:textColor="@color/widget_good" android:layout_marginTop="4dp" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:paddingStart="8dp">
+        <TextView android:id="@+id/total_upload" style="@style/WidgetLabel" android:text="已上传 —" />
+        <TextView android:id="@+id/total_download" style="@style/WidgetLabel" android:text="已下载 —" android:layout_marginTop="4dp" />
+    </LinearLayout>
+</LinearLayout>
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="4dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/traffic_remaining" style="@style/WidgetLabel" android:layout_width="0dp" android:layout_weight="1" android:text="剩余 —" />
+        <TextView android:id="@+id/traffic_detail" style="@style/WidgetLabel" android:layout_width="wrap_content" android:text="— / —" />
+    </LinearLayout>
+    <ImageView android:id="@+id/traffic_bar" android:layout_width="match_parent" android:layout_height="5dp" android:layout_marginTop="2dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+</LinearLayout>
+<TextView android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/widget_stroke" android:layout_marginTop="4dp" android:layout_marginBottom="4dp" />
+<LinearLayout android:id="@+id/ping_rows" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+<TextView android:id="@+id/footer" style="@style/WidgetLabel" android:text="等待更新" android:layout_marginTop="4dp" />
+</LinearLayout>

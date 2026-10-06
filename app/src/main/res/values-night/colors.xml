@@ -1,0 +1,18 @@
+<resources>
+    <color name="page">#101827</color>
+    <color name="surface">#1A2538</color>
+    <color name="ink">#EDF2FF</color>
+    <color name="muted">#A4B0C9</color>
+    <color name="accent">#A6B2FF</color>
+    <color name="stroke">#2B3850</color>
+    <color name="widget_bg">#192130</color>
+    <color name="widget_panel">#222C3C</color>
+    <color name="widget_ink">#EDF2FF</color>
+    <color name="widget_muted">#A4B0C9</color>
+    <color name="widget_accent">#88B5FF</color>
+    <color name="widget_good">#68D6A3</color>
+    <color name="widget_bad">#FF887C</color>
+    <color name="widget_stroke">#344052</color>
+    <color name="widget_track">#3C4656</color>
+    <color name="widget_warning">#CDD95D</color>
+</resources>

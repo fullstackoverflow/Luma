@@ -1,0 +1,9 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="280dp" android:minHeight="180dp"
+    android:minResizeWidth="170dp" android:minResizeHeight="120dp"
+    android:targetCellWidth="4" android:targetCellHeight="3"
+    android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"
+    android:updatePeriodMillis="0" android:initialLayout="@layout/widget_wide"
+    android:previewLayout="@layout/widget_wide"
+    android:configure="dev.luma.monitor.WidgetConfigActivity"
+    android:widgetFeatures="reconfigurable" />
