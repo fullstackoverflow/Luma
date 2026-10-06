@@ -39,7 +39,7 @@
 
 ## 构建
 
-Android 9+；compile/target SDK 36，AGP 9.1，Gradle 9.3.1。
+Android 9+；compile SDK 37、target SDK 36，AGP 9.1.1，Gradle 9.3.1。
 
 ```powershell
 # 配置 Android Studio 自带 JBR 或受支持的 JDK，以及本机 Android SDK
@@ -64,7 +64,7 @@ Release 签名从环境变量 `KEYSTORE_FILE`（密钥文件路径）、`KEYSTOR
 | `KEY_ALIAS` | 密钥别名，例如 `luma` |
 | `KEY_PASSWORD` | 密钥密码 |
 
-工作流使用 JDK 21、Android SDK 36 和项目自带的 Gradle wrapper，构建已签名且经过混淆的 Release APK，运行现有单元测试及 Release Lint，并验证 APK 签名。缺少 Secrets 或检查失败时不会发布。
+工作流使用 JDK 21、Android SDK 37 和项目自带的 Gradle wrapper，构建已签名且经过混淆的 Release APK，运行现有单元测试及 Release Lint，并验证 APK 签名。缺少 Secrets 或检查失败时不会发布。
 
 发布前递增 `app/build.gradle.kts` 中的 `versionCode`，并更新本地默认 `versionName`。CI 的 APK `versionName` 自动使用标签去掉 `v` 后的值。提交代码后推送标签：
 

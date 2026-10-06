@@ -4,7 +4,7 @@ val releaseKeystore = providers.environmentVariable("KEYSTORE_FILE").orNull
 
 android {
     namespace = "dev.luma.monitor"
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         applicationId = "dev.luma.monitor"
         minSdk = 28
@@ -46,11 +46,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.work:work-runtime-ktx:2.10.0")
+    implementation("androidx.core:core:1.19.1")
+    implementation("androidx.appcompat:appcompat:1.8.0")
+    implementation("com.google.android.material:material:1.14.0")
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20240303")
+    testImplementation("org.json:json:20260814")
     testImplementation("org.robolectric:robolectric:4.17")
 }
